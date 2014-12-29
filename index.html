@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Backbone calendar</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+<body>
+	<div class="wrapper">
+		<div class="container calendar">
+			<div class="current-date">&nbsp;</div>
+			<div class="content">
+				<div class="prev"></div>
+				<div class="next"></div>
+				<div class="monthWrapper"></div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/template" id="tpl-month-grid">
+		<table class="month">
+			<thead>
+				<tr>
+					<% _.each(['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], function(dayName) { %>
+						<td class="day-name"><%= dayName %></td>
+					<% }); %>
+				</tr>
+			</thead>
+			<tbody>
+				<% _.each([0, 1, 2, 3, 4, 5], function(weekNum) { %>
+					<tr class="week">
+						<% _.each([0, 1, 2, 3, 4, 5, 6], function(dayNum) { %>
+							<% iterationDate = dates[weekNum * 7 + dayNum]; %>
+							<td class="day <%= iterationDate['inCurrentMonth'] ? 'inCurrentMonth' : '' %>" data-date="<%= iterationDate['date'] %>">
+								<div><%= iterationDate['day'] %></div>
+								<% if(iterationDate['note']) { %>
+									<% caption = iterationDate['note']['caption'] %>
+									<div class="note-caption">
+										<%= caption ? caption : '&nbsp;' %>
+									</div>
+								<% } %>
+							</td>
+						<% }); %>
+					</tr>
+				<% }); %>
+			</tbody>
+		</table>
+		
+	</script>
+
+	<script type="text/template" id="tpl-note-dlg">
+		<% isEditMode = (note != null) %>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="exampleModalLabel">
+						<%= isEditMode ? 'Редактировать' : 'Создать' %>  заметку на <%= date %>
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="note-caption" class="control-label">Название:</label>
+							<input type="text" class="form-control" id="note-caption" value="<%= isEditMode ? note['caption'] : '' %>">
+						</div>
+						<div class="form-group">
+							<label for="note-text" class="control-label">Содержание:</label>
+							<textarea class="form-control" id="note-text"><%= isEditMode ? note['text'] : '' %></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary save">Сохранить</button>
+					<% if(isEditMode) { %>
+						<button type="button" class="btn btn-primary remove">Удалить</button>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</script>
+
+	<div class="noteDlgWrapper">
+		<div class="shadow"></div>
+		<div class="noteDlg"></div>
+	</div>
+
+	<script src="js/libs/jquery.min.js"></script>
+	<script src="js/libs/bootstrap.min.js"></script>
+	<script src="js/libs/underscore.min.js"></script>
+	<script src="js/libs/backbone.min.js"></script>
+	<script src="js/dateformat.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/models/calendar.js"></script>
+	<script src="js/models/note.js"></script>
+	<script src="js/collections/notes.js"></script>
+	<script src="js/views/calendar.js"></script>
+	<script src="js/views/month.js"></script>
+	<script src="js/views/notedlg.js"></script>
+
+	<script>
+		window.onload = function() {
+			app.init();
+		}
+	</script>
+</body>
+</html>
